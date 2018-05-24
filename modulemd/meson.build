@@ -43,6 +43,7 @@ modulemd_v1_srcs = files(
     'v1/modulemd-dependencies.c',
     'v1/modulemd-improvedmodule.c',
     'v1/modulemd-intent.c',
+    'v1/modulemd-linting.c',
     'v1/modulemd-module.c',
     'v1/modulemd-modulestream.c',
     'v1/modulemd-prioritizer.c',
@@ -88,6 +89,7 @@ modulemd_v1_hdrs = files(
 
 modulemd_priv_hdrs = files(
     'include/modulemd-1.0/private/modulemd-improvedmodule-private.h',
+    'include/modulemd-1.0/private/modulemd-linting.h',
     'include/modulemd-1.0/private/modulemd-private.h',
     'include/modulemd-1.0/private/modulemd-profile-private.h',
     'include/modulemd-1.0/private/modulemd-subdocument-private.h',
