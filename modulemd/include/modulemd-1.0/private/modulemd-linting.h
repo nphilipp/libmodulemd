@@ -1,4 +1,4 @@
-/* modulemd-linting.c
+/* modulemd-linting.h
  *
  * Copyright (C) 2018 Red Hat, Inc.
  *
