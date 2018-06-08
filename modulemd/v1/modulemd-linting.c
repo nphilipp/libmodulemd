@@ -23,6 +23,7 @@
  */
 
 #include <glib.h>
+#include <stdarg.h>
 #include <string.h>
 #include <yaml.h>
 #include "modulemd.h"
@@ -54,8 +55,8 @@ static GSList *_lint_problems = NULL;
 /* private functions */
 
 static _MMDLintProblem *
-_mmd_lint_problem_new_full (const yaml_event_t *event, const gchar *doc_url,
-                            const gchar *description)
+_mmd_lint_problem_new_vfull (const yaml_event_t *event, const gchar *doc_url,
+                             const gchar *description, va_list args)
 {
   _MMDLintProblem *problem;
 
@@ -72,7 +73,24 @@ _mmd_lint_problem_new_full (const yaml_event_t *event, const gchar *doc_url,
     }
 
   problem->doc_url = g_strdup (doc_url);
-  problem->description = g_strdup (description);
+  problem->description = g_strdup_vprintf (description, args);
+
+  return problem;
+}
+
+static _MMDLintProblem *
+_mmd_lint_problem_new_full (const yaml_event_t *event, const gchar *doc_url,
+                            const gchar *description, ...)
+{
+  _MMDLintProblem *problem;
+  va_list args;
+
+  g_return_val_if_fail (event != NULL || doc_url != NULL ||
+                        description != NULL, NULL);
+
+  va_start (args, description);
+  problem = _mmd_lint_problem_new_vfull (event, doc_url, description, args);
+  va_end (args);
 
   return problem;
 }
@@ -121,16 +139,19 @@ mmd_lint_problems_clear (void)
 }
 
 void
-mmd_lint_log_problem (const yaml_event_t *event, const gchar *doc_url,
-                      const gchar *description)
+mmd_lint_log_problem_full (const yaml_event_t *event, const gchar *doc_url,
+                           const gchar *description, ...)
 {
   _MMDLintProblem *problem;
+  va_list args;
 
   g_return_if_fail (event != NULL || doc_url != NULL || description != NULL);
 
   _RUN_IF_LINTING();
 
-  problem = _mmd_lint_problem_new_full (event, doc_url, description);
+  va_start (args, description);
+  problem = _mmd_lint_problem_new_vfull (event, doc_url, description, args);
+  va_end (args);
 
   _lint_problems = g_slist_append (_lint_problems, problem);
 }

@@ -45,9 +45,10 @@ void
 mmd_lint_problems_clear (void);
 
 void
-mmd_lint_log_problem (const yaml_event_t *event,
-                      const gchar *doc_url,
-                      const gchar *description);
+mmd_lint_log_problem_full (const yaml_event_t *event,
+                           const gchar *doc_url,
+                           const gchar *description,
+                           ...);
 
 G_END_DECLS
 
