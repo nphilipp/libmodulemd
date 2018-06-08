@@ -13,6 +13,7 @@
 
 #include "modulemd.h"
 #include "private/modulemd-yaml.h"
+#include "private/modulemd-linting.h"
 
 #include <glib.h>
 #include <locale.h>
@@ -159,7 +160,13 @@ main (int argc, char *argv[])
           fprintf (stdout, "Validating %s\n", filename);
         }
 
+      mmd_lint_problems_clear ();
+      mmd_lint_start ();
+
       objects = modulemd_objects_from_file_ext (filename, &failures, &error);
+
+      mmd_lint_stop ();
+
       if (!objects)
         {
           if (options.verbosity >= MMD_DEFAULT)
