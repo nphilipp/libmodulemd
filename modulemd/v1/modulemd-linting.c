@@ -40,53 +40,53 @@
 
 /* private types */
 
-typedef struct _MMDLintInfo_s {
+typedef struct _MMDLintProblem_s {
   yaml_event_t *event;
   gchar *doc_url;
   gchar *description;
-} _MMDLintInfo;
+} _MMDLintProblem;
 
 /* file-level "private" globals */
 
 static gboolean _linting = FALSE;
-static GSList *_lint_infos = NULL;
+static GSList *_lint_problems = NULL;
 
 /* private functions */
 
-static _MMDLintInfo *
-_mmd_lint_info_new_full (const yaml_event_t *event, const gchar *doc_url,
-                         const gchar *description)
+static _MMDLintProblem *
+_mmd_lint_problem_new_full (const yaml_event_t *event, const gchar *doc_url,
+                            const gchar *description)
 {
-  _MMDLintInfo *info;
+  _MMDLintProblem *problem;
 
   g_return_val_if_fail (event != NULL || doc_url != NULL ||
                         description != NULL, NULL);
 
-  info = g_malloc0 (sizeof (_MMDLintInfo));
+  problem = g_malloc0 (sizeof (_MMDLintProblem));
 
   if (event != NULL)
     {
-      info->event = g_malloc (sizeof (yaml_event_t));
+      problem->event = g_malloc (sizeof (yaml_event_t));
 
-      memcpy (info->event, event, sizeof (yaml_event_t));
+      memcpy (problem->event, event, sizeof (yaml_event_t));
     }
 
-  info->doc_url = g_strdup (doc_url);
-  info->description = g_strdup (description);
+  problem->doc_url = g_strdup (doc_url);
+  problem->description = g_strdup (description);
 
-  return info;
+  return problem;
 }
 
 static void
-_mmd_lint_info_free (_MMDLintInfo *info)
+_mmd_lint_problem_free (_MMDLintProblem *problem)
 {
-  g_return_if_fail (info != NULL);
+  g_return_if_fail (problem != NULL);
 
-  g_free (info->event);
-  g_free (info->doc_url);
-  g_free (info->description);
+  g_free (problem->event);
+  g_free (problem->doc_url);
+  g_free (problem->description);
 
-  g_free (info);
+  g_free (problem);
 }
 
 /* public functions */
@@ -114,23 +114,23 @@ mmd_lint_is_linting (void)
 }
 
 void
-mmd_lint_infos_clear (void)
+mmd_lint_problems_clear (void)
 {
-  g_slist_free_full (_lint_infos, (GDestroyNotify) _mmd_lint_info_free);
-  _lint_infos = NULL;
+  g_slist_free_full (_lint_problems, (GDestroyNotify) _mmd_lint_problem_free);
+  _lint_problems = NULL;
 }
 
 void
-mmd_lint_add_info (const yaml_event_t *event, const gchar *doc_url,
-                   const gchar *description)
+mmd_lint_log_problem (const yaml_event_t *event, const gchar *doc_url,
+                      const gchar *description)
 {
-  _MMDLintInfo *info;
+  _MMDLintProblem *problem;
 
   g_return_if_fail (event != NULL || doc_url != NULL || description != NULL);
 
   _RUN_IF_LINTING();
 
-  info = _mmd_lint_info_new_full (event, doc_url, description);
+  problem = _mmd_lint_problem_new_full (event, doc_url, description);
 
-  _lint_infos = g_slist_append (_lint_infos, info);
+  _lint_problems = g_slist_append (_lint_problems, problem);
 }
