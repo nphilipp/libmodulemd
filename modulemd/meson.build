@@ -90,6 +90,7 @@ modulemd_v1_hdrs = files(
 modulemd_priv_hdrs = files(
     'include/modulemd-1.0/private/modulemd-improvedmodule-private.h',
     'include/modulemd-1.0/private/modulemd-linting.h',
+    'include/modulemd-1.0/private/modulemd-linting-problems.h',
     'include/modulemd-1.0/private/modulemd-private.h',
     'include/modulemd-1.0/private/modulemd-profile-private.h',
     'include/modulemd-1.0/private/modulemd-subdocument-private.h',

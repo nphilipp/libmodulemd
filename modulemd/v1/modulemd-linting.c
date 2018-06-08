@@ -47,10 +47,20 @@ typedef struct _MMDLintProblem_s {
   gchar *description;
 } _MMDLintProblem;
 
+typedef struct _MMDLintProblemDesc_s {
+  MMDLintProblemID id;
+  const gchar *doc_url;
+  const gchar *description;
+} _MMDLintProblemDesc;
+
 /* file-level "private" globals */
 
 static gboolean _linting = FALSE;
 static GSList *_lint_problems = NULL;
+
+static _MMDLintProblemDesc _lint_id_to_descs[] = {
+    {MMD_LINT_PROB_NO_MODULEMD, "", "This is not a modulemd YAML file."},
+};
 
 /* private functions */
 
@@ -152,6 +162,44 @@ mmd_lint_log_problem_full (const yaml_event_t *event, const gchar *doc_url,
   va_start (args, description);
   problem = _mmd_lint_problem_new_vfull (event, doc_url, description, args);
   va_end (args);
+
+  _lint_problems = g_slist_append (_lint_problems, problem);
+}
+
+void
+mmd_lint_log_problem (const yaml_event_t *event, MMDLintProblemID problem_id)
+{
+  guint i;
+  _MMDLintProblem *problem;
+  _MMDLintProblemDesc *desc = NULL;
+
+  g_return_if_fail (event != NULL || problem_id <= MMD_LINT_PROB_MIN ||
+                    problem_id >= MMD_LINT_PROB_MAX);
+
+  _RUN_IF_LINTING();
+
+  for (i=0; i<sizeof (_lint_id_to_descs)/sizeof (_lint_id_to_descs[0]); i++)
+    {
+      if (_lint_id_to_descs[i].id == problem_id)
+        {
+          desc = &(_lint_id_to_descs[i]);
+          break;
+        }
+    }
+
+  if (desc)
+    {
+      problem = _mmd_lint_problem_new_full (event,
+                                            desc->doc_url,
+                                            desc->description);
+    }
+  else
+    {
+      g_error ("Problem ID without corresponding description: %u", problem_id);
+      problem = _mmd_lint_problem_new_full (event, NULL,
+                                            "Unknown problem (id %u)",
+                                            problem_id);
+    }
 
   _lint_problems = g_slist_append (_lint_problems, problem);
 }

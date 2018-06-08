@@ -20,6 +20,7 @@
 #include "private/modulemd-yaml.h"
 #include "private/modulemd-util.h"
 #include "private/modulemd-subdocument-private.h"
+#include "private/modulemd-linting.h"
 
 GQuark
 modulemd_yaml_error_quark (void)
@@ -677,6 +678,7 @@ _read_yaml_and_type (yaml_parser_t *parser, ModulemdSubdocument **subdocument)
                                    "[line %zu col %zu]",
                                    event.start_mark.line,
                                    event.start_mark.column);
+                      mmd_lint_log_problem (&event, MMD_LINT_PROB_NO_MODULEMD);
                     }
 
                   g_debug (

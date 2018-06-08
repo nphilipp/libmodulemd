@@ -1,4 +1,4 @@
-/* modulemd-linting.h
+/* modulemd-linting-problems.h
  *
  * Copyright (C) 2018 Red Hat, Inc.
  *
@@ -22,37 +22,19 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef MODULEMD_LINTING_H
-#define MODULEMD_LINTING_H
+#ifndef MODULEMD_LINTING_PROBLEMS_H
+#define MODULEMD_LINTING_PROBLEMS_H
 
 #include <glib.h>
-#include <yaml.h>
-#include "private/modulemd-linting-problems.h"
 
 G_BEGIN_DECLS
 
-void
-mmd_lint_start (void);
-
-void
-mmd_lint_stop (void);
-
-gboolean
-mmd_lint_is_linting (void);
-
-void
-mmd_lint_problems_clear (void);
-
-void
-mmd_lint_log_problem_full (const yaml_event_t *event,
-                           const gchar *doc_url,
-                           const gchar *description,
-                           ...);
-
-void
-mmd_lint_log_problem (const yaml_event_t *event,
-                      MMDLintProblemID problem);
+typedef enum _MMDLintProblemID {
+    MMD_LINT_PROB_MIN,
+    MMD_LINT_PROB_NO_MODULEMD,
+    MMD_LINT_PROB_MAX,
+} MMDLintProblemID;
 
 G_END_DECLS
 
-#endif /* MODULEMD_LINTING_H */
+#endif /* MODULEMD_LINTING_PROBLEMS_H */
