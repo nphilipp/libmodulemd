@@ -27,8 +27,6 @@
 
 #include <glib.h>
 #include <yaml.h>
-#include "modulemd.h"
-#include "private/modulemd-linting.h"
 
 G_BEGIN_DECLS
 
